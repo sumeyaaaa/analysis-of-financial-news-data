@@ -88,26 +88,32 @@ def plot_bar(
 
 import pandas as pd
 
-def get_rolling_counts(
+import pandas as pd
+import matplotlib.pyplot as plt
+
+def get_rolling_series(
     df, 
-    date_col='date', 
+    value_col, 
+    date_col='Date', 
     window=7, 
     groupby_period='D'
 ):
     """
-    Returns a rolling mean of article counts grouped by date (or another period).
-    
+    Returns a rolling mean of a value column grouped by date (or another period).
+
     Args:
-        df: DataFrame with a date column
+        df: DataFrame with a date and value column
+        value_col: Name of the column to calculate rolling mean on (e.g., 'open')
         date_col: Name of the date column (default: 'date')
         window: Rolling window size (default: 7)
         groupby_period: Pandas offset alias ('D' for day, 'M' for month, etc.)
-    
+
     Returns:
-        pd.Series: Rolling mean of counts, indexed by date/period
+        pd.Series: Rolling mean of the selected value column, indexed by date/period
     """
     df = df.copy()
     df[date_col] = pd.to_datetime(df[date_col], errors='coerce')
-    grouped = df.groupby(pd.Grouper(key=date_col, freq=groupby_period)).size()
+    # Group by period and take the mean if multiple rows per date
+    grouped = df.groupby(pd.Grouper(key=date_col, freq=groupby_period))[value_col].mean()
     rolling_avg = grouped.rolling(window=window, min_periods=1).mean()
     return rolling_avg
