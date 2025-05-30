@@ -86,3 +86,28 @@ def plot_bar(
     plt.tight_layout()
     plt.show()
 
+import pandas as pd
+
+def get_rolling_counts(
+    df, 
+    date_col='date', 
+    window=7, 
+    groupby_period='D'
+):
+    """
+    Returns a rolling mean of article counts grouped by date (or another period).
+    
+    Args:
+        df: DataFrame with a date column
+        date_col: Name of the date column (default: 'date')
+        window: Rolling window size (default: 7)
+        groupby_period: Pandas offset alias ('D' for day, 'M' for month, etc.)
+    
+    Returns:
+        pd.Series: Rolling mean of counts, indexed by date/period
+    """
+    df = df.copy()
+    df[date_col] = pd.to_datetime(df[date_col], errors='coerce')
+    grouped = df.groupby(pd.Grouper(key=date_col, freq=groupby_period)).size()
+    rolling_avg = grouped.rolling(window=window, min_periods=1).mean()
+    return rolling_avg
