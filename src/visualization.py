@@ -43,3 +43,46 @@ def plot_time_trend(
     plt.ylabel(ylabel)
     plt.tight_layout()
     plt.show()
+
+import matplotlib.pyplot as plt
+
+def plot_bar(
+    series,
+    title="Bar Plot",
+    xlabel=None,
+    ylabel="Count",
+    color="steelblue",
+    figsize=(10, 5),
+    rotation=45,
+    top_n=None,
+    horizontal=False
+):
+    """
+    Plots a bar plot for a pandas Series (or DataFrame column group/count).
+    
+    Args:
+        series (pd.Series): Data to plot (index: categories, values: counts).
+        title (str): Plot title.
+        xlabel (str): X-axis label.
+        ylabel (str): Y-axis label.
+        color (str): Bar color.
+        figsize (tuple): Figure size.
+        rotation (int): X-axis label rotation.
+        top_n (int or None): Show only the top N items if set.
+        horizontal (bool): Plot horizontal bar chart if True.
+    """
+    data = series.head(top_n) if top_n is not None else series
+    plt.figure(figsize=figsize)
+    if horizontal:
+        data.plot(kind="barh", color=color)
+        plt.xlabel(ylabel)
+        plt.ylabel(xlabel if xlabel else data.index.name or "Category")
+    else:
+        data.plot(kind="bar", color=color)
+        plt.xlabel(xlabel if xlabel else data.index.name or "Category")
+        plt.ylabel(ylabel)
+        plt.xticks(rotation=rotation, ha="right")
+    plt.title(title)
+    plt.tight_layout()
+    plt.show()
+
